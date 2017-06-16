@@ -15,4 +15,14 @@ goods.findGoodsList = (params, callback) => {
 	})
 }
 
+/**
+ * 获取商品分类
+ */
+goods.findGoodsType = (callback) => {
+	Vue.http.get('/haoback_service/goods/goods_type').then((res) => {
+	    let data = res.body.datas.data;
+        !!callback && callback(data);
+	})
+}
+
 export default goods
