@@ -6,6 +6,10 @@ let dateUtils = {
 
 	// 时间格式化
 	formatDate: (date, fmt) => {
+		if(!date){
+			return '';
+		}
+
 		if(typeof date == 'number'){
 			date = new Date(date);
 		}

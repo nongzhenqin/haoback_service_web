@@ -27,7 +27,7 @@
 	            </Select>
 	        </Form-item>
 	        <Form-item>
-	            <Button type="primary" @click="handleSubmit('form')">查询</Button>
+	            <Button type="primary" @click="handleSubmit('form')" ref="searchBtn">查询</Button>
 	            <Button type="ghost" @click="handleReset('form')" style="margin-left: 8px">重置</Button>
 	        </Form-item>
 		</Form>
@@ -82,9 +82,11 @@
 				        </Form-item>
 	        		</Col>
 	        		<Col span="12">
-				        <Form-item label="类目" prop="goodsType">
-				            <Select v-model="addOrEditForm.goodsType" placeholder="请输入类目">
-				                	<Option v-for="goodsType in model.goodsTypeSelect" :value="goodsType.id" :key="goodsType.id">{{goodsType.name}}</Option>
+				        <Form-item label="类目" prop="goodsTypeId">
+				            <Select v-model="addOrEditForm.goodsTypeId" placeholder="请输入类目">
+				            	<template v-for="goodsType in model.goodsTypeSelect">
+				            		<Option :value="goodsType.id">{{goodsType.name}}</Option>
+				            	</template>
 				            </Select>
 				        </Form-item>
 	        		</Col>
@@ -98,7 +100,6 @@
 	        		</Col>
 	        		<Col span="12">
 	        			<Form-item label="状态" prop="status">
-				            <!-- <Input v-model="addOrEditForm.status" placeholder="请输入状态"></Input> -->
 				            <Select v-model="addOrEditForm.status" placeholder="请输入状态">
 				            	<Option value="1">上架</Option>
 				            	<Option value="0">下架</Option>
@@ -113,6 +114,14 @@
 				            <Input v-model="addOrEditForm.sort" placeholder="请输入排序权重，从0开始，数值越大越靠前，如果权重值一致则按ID从小到大排序"></Input>
 				        </Form-item>
 	        		</Col>
+	        		<Col span="12">
+		        		<Form-item label="有效" prop="deleted">
+				            <Select v-model="addOrEditForm.deleted" placeholder="请输入">
+				            	<Option value="false">有效</Option>
+				            	<Option value="true">无效</Option>
+				            </Select>
+				        </Form-item>
+			        </Col>
 	        	</Row>
 
 	        	<Row>
@@ -201,15 +210,17 @@ export default {
       	},
       	// 新增或编辑商品表单对象
       	addOrEditForm: {
+      		id: '',
       		name: '',
       		info: '',
       		brand: '',
       		models: '',
       		price: '',
-      		goodsType: '',
+      		goodsTypeId: '',
       		salesNum: '',
       		status: '1',
       		sort: '',
+      		deleted: '',
       		image: ''
       	},
       	addOrEditRule: {
@@ -229,17 +240,20 @@ export default {
                 { required: true, message: '价格不能为空', trigger: 'blur' },
                 { validator: validatePrice, trigger: 'blur' }
             ],
-            goodsType: [
-                { required: true, message: '类目不能为空', trigger: 'blur' }
+            goodsTypeId: [
+                { required: true, message: '类目不能为空', trigger: 'change' }
             ],
             salesNum: [
                 { required: true, message: '销量不能为空', trigger: 'blur' }
             ],
             status: [
-                { required: true, message: '状态不能为空', trigger: 'blur' }
+                { required: true, message: '状态不能为空', trigger: 'change' }
             ],
             sort: [
                 { required: true, message: '排序权重不能为空', trigger: 'blur' }
+            ],
+            deleted: [
+                { required: true, message: '有效状态不能为空', trigger: 'blur' }
             ]
       	},
       	// 查询条件对象
@@ -302,7 +316,7 @@ export default {
 		                    },
 		                    on: {
 		                        click: () => {
-		                            this.remove(params.index)
+		                            this.remove(params.row.id)
 		                        }
 		                    }
 		                }, '删除')
@@ -320,13 +334,24 @@ export default {
 
     	// 初始化新增/编辑商品弹窗中的类目
     	goods.findGoodsType((res) => {
-    		this.model.goodsTypeSelect = res;
+    		let select = [];
+    		for(let i=0,len=res.length; i<len; i++){
+    			let data = {};
+    			data.id = res[i].id + '';
+    			data.name = res[i].name;
+    			select.push(data);
+    		}
+    		this.model.goodsTypeSelect = select;
     	});
     },
 
     methods: {
-      remove (index) {
-        this.data6.splice(index, 1);
+      // 逻辑删除商品
+      remove (goodsId) {
+        goods.delete(goodsId, (res) => {
+        	this.$Message.success('删除成功!');
+        	this.handleSubmit('form');// 刷新商品列表
+        });
       },
       // 拾取图片
       getImages (type) {
@@ -369,13 +394,13 @@ export default {
       // 分页当前页改变回调
       pageNoChange (pageNo){
       	this.page.pageNo = pageNo;
-      	this.search({pageNo: pageNo, pageSize: this.page.pageSize, name: this.form.name, beginDate: this.form.beginDate, endDate: this.form.endDate, validind: this.form.validind});
+      	this.search({pageNo: pageNo, pageSize: this.page.pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind});
       },
       // 每页大小变化时
       pageSizeChange (pageSize){
       	this.page.pageNo = 1;
       	this.page.pageSize = pageSize
-      	this.search({pageNo: this.page.pageNo, pageSize: pageSize, name: this.form.name, beginDate: this.form.beginDate, endDate: this.form.endDate, validind: this.form.validind});
+      	this.search({pageNo: this.page.pageNo, pageSize: pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind});
       },
       // 查询提交
       handleSubmit (name) {
@@ -383,7 +408,7 @@ export default {
             if (valid) {
             	this.datas = [];
                 // this.$Message.success('提交成功!');
-                this.search({pageNo: this.page.pageNo, pageSize: this.page.pageSize, name: this.form.name, beginDate: this.form.beginDate, endDate: this.form.endDate, validind: this.form.validind});
+                this.search({pageNo: this.page.pageNo, pageSize: this.page.pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind});
             } else {
                 this.$Message.error('表单验证失败!');
             }
@@ -395,22 +420,57 @@ export default {
       },
       // 新增/编辑商品
       showAddOrEditGoodsModel (goodsId) {
-      	this.model.show = true;
       	if(typeof goodsId == 'undefined'){
       		this.model.title = '新增商品'
+      		this.addOrEditForm.id = '';
+      		this.addOrEditForm.name = '';
+			this.addOrEditForm.info = '';
+	      	this.addOrEditForm.brand = '';
+	      	this.addOrEditForm.models = '';
+	      	this.addOrEditForm.price = '';
+	      	this.addOrEditForm.goodsTypeId = '';
+	      	this.addOrEditForm.salesNum = '';
+	      	this.addOrEditForm.status = '1';
+	      	this.addOrEditForm.sort = '';
+	      	this.addOrEditForm.deleted = 'false';
+	      	this.addOrEditForm.image = '';
+	      	this.cropper.img = '';
+
+	      	this.model.show = true;// 显示窗口
       	}else{
       		this.model.title = '编辑商品'
+      		goods.findById(goodsId, (res) => {
+      			console.log(res)
+      			this.addOrEditForm.id = res.id;
+	      		this.addOrEditForm.name = res.name;
+				this.addOrEditForm.info = res.info;
+		      	this.addOrEditForm.brand = res.brand;
+		      	this.addOrEditForm.models = res.models;
+		      	this.addOrEditForm.price = res.price + '';
+		      	this.addOrEditForm.goodsTypeId = res.goodsTypeId + '';
+		      	this.addOrEditForm.salesNum = res.salesNum + '';
+		      	this.addOrEditForm.status = res.status;
+		      	this.addOrEditForm.sort = res.sort + '';
+		      	this.addOrEditForm.deleted = res.deleted + '';
+		      	this.addOrEditForm.image = '/haoback_service/goods/image/' + res.fileId;
+
+		      	this.model.show = true;// 显示窗口
+      		});
       	}
       },
       ok (name) {
-	      // this.$Message.info('点击了确定');
-	      // setTimeout(()=>{
-	      // 	this.model.show = false;
-	      // }, 1500);
 	      this.$refs[name].validate((valid) => {
 	      	// 表单校验成功
 	      	if(valid){
-	      		this.$Message.success('提交成功!');
+	      		goods.save(this.addOrEditForm, (res) => {
+	      			if(res.code == '1'){
+	      				this.$Message.success('提交成功!');
+	      				setTimeout(() => {
+			      			this.model.show = false;
+			      			this.handleSubmit('form');// 刷新商品列表
+			      		}, 500);
+	      			}
+	      		});
 	      	}else{
 	      		this.$Message.error('表单验证失败!');
 	      		this.model.loading = false;
