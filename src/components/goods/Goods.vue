@@ -126,6 +126,14 @@
 
 	        	<Row>
 	        		<Col span="12">
+	        			<Form-item label="淘宝URL" prop="urlLink">
+				            <Input v-model="addOrEditForm.urlLink" placeholder="请输入淘宝URL"></Input>
+				        </Form-item>
+	        		</Col>
+	        	</Row>
+
+	        	<Row>
+	        		<Col span="12">
 	        			<Form-item label="缩略图" prop="image">
 	        				<img :src="addOrEditForm.image" style="width: 218px; height: 218px;" v-if="addOrEditForm.image != null && addOrEditForm.image.length > 0" @click="clickImages" />
 							<Button type="dashed" v-if="addOrEditForm.image == null || addOrEditForm.image.length == 0"  style="width: 218px; height: 218px;" @click="clickImages">
@@ -188,10 +196,11 @@ export default {
       return {
       	// 图片裁剪插件对象
       	cropper: {
+      		isUse: false,// 是否使用此插件，因为此插件截取后图片变模糊，所有设置开关
       		img: '',
       		outputSize: 1,
       		outputType: 'jpeg',
-      		canScale: false,
+      		canScale: true,
       		autoCrop: true,
       		// 只有自动截图开启 宽度高度才生效
 			autoCropWidth: 218,
@@ -221,21 +230,22 @@ export default {
       		status: '1',
       		sort: '',
       		deleted: '',
-      		image: ''
+      		image: '',
+      		urlLink: ''
       	},
       	addOrEditRule: {
       		name: [
                 { required: true, message: '商品名称不能为空', trigger: 'blur' }
             ],
-            info: [
-                { required: true, message: '简介不能为空', trigger: 'blur' }
-            ],
-            brand: [
-                { required: true, message: '品牌不能为空', trigger: 'blur' }
-            ],
-            models: [
-                { required: true, message: '型号不能为空', trigger: 'blur' }
-            ],
+            // info: [
+            //     { required: true, message: '简介不能为空', trigger: 'blur' }
+            // ],
+            // brand: [
+            //     { required: true, message: '品牌不能为空', trigger: 'blur' }
+            // ],
+            // models: [
+            //     { required: true, message: '型号不能为空', trigger: 'blur' }
+            // ],
             price: [
                 { required: true, message: '价格不能为空', trigger: 'blur' },
                 { validator: validatePrice, trigger: 'blur' }
@@ -254,6 +264,9 @@ export default {
             ],
             deleted: [
                 { required: true, message: '有效状态不能为空', trigger: 'blur' }
+            ],
+            urlLink: [
+                { required: true, message: 'URL不能为空', trigger: 'blur' }
             ]
       	},
       	// 查询条件对象
@@ -375,7 +388,11 @@ export default {
 		 }
 		var reader = new FileReader()
 		reader.onload = (e) => {
-			this.cropper.img = e.target.result
+			if(this.cropper.isUse){
+      			this.cropper.img = e.target.result
+      		}else{
+      			this.addOrEditForm.image = e.target.result
+      		}
 		}
 		reader.readAsDataURL(file)
       },
@@ -434,6 +451,7 @@ export default {
 	      	this.addOrEditForm.sort = '';
 	      	this.addOrEditForm.deleted = 'false';
 	      	this.addOrEditForm.image = '';
+	      	this.addOrEditForm.urlLink = '';
 	      	this.cropper.img = '';
 
 	      	this.model.show = true;// 显示窗口
@@ -452,6 +470,7 @@ export default {
 		      	this.addOrEditForm.status = res.status;
 		      	this.addOrEditForm.sort = res.sort + '';
 		      	this.addOrEditForm.deleted = res.deleted + '';
+		      	this.addOrEditForm.urlLink = res.urlLink;
 		      	this.addOrEditForm.image = '/haoback_service/goods/image/' + res.fileId;
 
 		      	this.model.show = true;// 显示窗口
