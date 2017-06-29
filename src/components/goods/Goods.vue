@@ -126,8 +126,24 @@
 
 	        	<Row>
 	        		<Col span="12">
-	        			<Form-item label="淘宝URL" prop="urlLink">
+	        			<Form-item label="商品URL" prop="urlLink">
 				            <Input v-model="addOrEditForm.urlLink" placeholder="请输入淘宝URL"></Input>
+				        </Form-item>
+	        		</Col>
+	        		<Col span="12">
+	        			<Form-item label="优惠券URL" prop="urlLinkCoupon">
+				            <Input v-model="addOrEditForm.urlLinkCoupon" placeholder="请输入优惠券URL，当同时存在商品URL和优惠券URL时，默认用优惠券URL打开"></Input>
+				        </Form-item>
+	        		</Col>
+	        	</Row>
+
+	        	<Row>
+	        		<Col span="12">
+	        			<Form-item label="天猫商家" prop="isTmall">
+				            <Select v-model="addOrEditForm.isTmall" placeholder="请选择">
+				            	<Option value="0">否</Option>
+				            	<Option value="1">是</Option>
+				            </Select>
 				        </Form-item>
 	        		</Col>
 	        	</Row>
@@ -231,7 +247,9 @@ export default {
       		sort: '',
       		deleted: '',
       		image: '',
-      		urlLink: ''
+      		urlLink: '',
+      		urlLinkCoupon: '',
+      		isTmall: ''
       	},
       	addOrEditRule: {
       		name: [
@@ -452,6 +470,8 @@ export default {
 	      	this.addOrEditForm.deleted = 'false';
 	      	this.addOrEditForm.image = '';
 	      	this.addOrEditForm.urlLink = '';
+	      	this.addOrEditForm.urlLinkCoupon = '';
+	      	this.addOrEditForm.isTmall = '0';
 	      	this.cropper.img = '';
 
 	      	this.model.show = true;// 显示窗口
@@ -471,6 +491,8 @@ export default {
 		      	this.addOrEditForm.sort = res.sort + '';
 		      	this.addOrEditForm.deleted = res.deleted + '';
 		      	this.addOrEditForm.urlLink = res.urlLink;
+		      	this.addOrEditForm.urlLinkCoupon = res.urlLinkCoupon;
+	      		this.addOrEditForm.isTmall = res.isTmall ? '1' : '0';
 		      	this.addOrEditForm.image = '/haoback_service/goods/image/' + res.fileId;
 
 		      	this.model.show = true;// 显示窗口
