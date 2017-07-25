@@ -55,4 +55,14 @@ goods.delete = (goodsId, callback) => {
 	})
 }
 
+/**
+ * 从淘宝拉取商品信息
+ */
+goods.updateGoodsInfo = (callback) => {
+	Vue.http.post('/haoback_service/goods_service/updateGoodsInfo').then((res) => {
+		let data = res.body.datas;
+        !!callback && callback(data);
+	})
+}
+
 export default goods

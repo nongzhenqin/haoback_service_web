@@ -32,6 +32,7 @@
 	        </Form-item>
 		</Form>
 		<Button type="primary" style="margin-bottom: 10px;" @click="showAddOrEditGoodsModel()">新增</Button>
+		<Button type="primary" style="margin-bottom: 10px;" :loading="loading" @click="updateGoodsInfo()">从淘宝拉取最新商品信息</Button>
 		<!-- 表格 -->
 		<Table border :columns="columns" :data="datas"></Table>
 		<!-- 分页 -->
@@ -210,6 +211,7 @@ export default {
       };
 
       return {
+      	loading: false,
       	// 图片裁剪插件对象
       	cropper: {
       		isUse: false,// 是否使用此插件，因为此插件截取后图片变模糊，所有设置开关
@@ -528,7 +530,22 @@ export default {
 	  },
 	  cancel () {
 	      this.$Message.info('点击了取消');
-	  }
+	  },
+	  updateGoodsInfo(){
+		this.loading = true
+		goods.updateGoodsInfo((res) => {
+			this.loading = false
+			console.log(res)
+	        if(res.code == '1'){
+	        	this.handleSubmit('form');// 刷新商品列表
+	        	this.$Notice.open({
+                    title: '拉取最新商品信息完毕！',
+                    duration: 0,// 不自动关闭
+                    desc: ''
+                });
+	        }
+		})
+      }
     },
     components: {
     	vueCropper
