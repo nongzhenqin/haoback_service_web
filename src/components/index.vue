@@ -139,7 +139,8 @@ export default {
           '/index': ['主页'],
           '/index/home': ['主页'],
           '/index/user': ['系统管理', '用户管理'],
-          '/index/goods': ['商品管理']
+          '/index/goods': ['商品管理'],
+          '/index/goodstype': ['商品类型']
         },
         modal: {
           modalChangePassword: false,

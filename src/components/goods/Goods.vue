@@ -376,6 +376,11 @@ export default {
     	});
     },
 
+    // 模板编译/挂载后
+    mounted() {
+    	this.handleSubmit('form');
+    },
+
     methods: {
       // 逻辑删除商品
       remove (goodsId) {
