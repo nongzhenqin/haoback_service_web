@@ -2,9 +2,6 @@
 	<div>
 		<!-- 查询条件 -->
 		<Form ref="form" :model="form" :label-width="90" inline>
-			<Form-item label="类目名称" prop="name" style="width: 250px;">
-	            <Input v-model="form.name" placeholder="请输入类目名称"></Input>
-	        </Form-item>
 	        <Form-item label="有效" prop="deleted">
 	            <Select v-model="form.deleted" placeholder="请选择">
 	                <Option value="false">有效</Option>
@@ -21,8 +18,6 @@
 
 		<!-- 表格 -->
 		<Table border :columns="columns" :data="datas"></Table>
-		<!-- 分页 -->
-		<Page :total="page.total" :current="page.pageNo" :page-size="page.pageSize" show-sizer show-elevator show-total style="float: right; padding-top: 10px;" @on-change="pageNoChange" @on-page-size-change="pageSizeChange"></Page>
 
 		<!-- 新增或编辑模态窗口 -->
 		<Modal
@@ -39,29 +34,22 @@
 			<Form ref="addOrEditForm" :model="addOrEditForm" :rules="addOrEditRule" :label-width="90">
 				<Row>
 	        		<Col span="12">
-	        			<Form-item label="类目编码" prop="code">
-				            <Input v-model="addOrEditForm.code" placeholder="请输入类目编码"></Input>
+	        			<Form-item label="名称" prop="name">
+				            <Input v-model="addOrEditForm.name" placeholder="请输入名称"></Input>
 				        </Form-item>
 	        		</Col>
 	        		<Col span="12">
-	        			<Form-item label="类目名称" prop="name">
-				            <Input v-model="addOrEditForm.name" placeholder="请输入类目名称"></Input>
+	        			<Form-item label="商品URL" prop="urlLink">
+				            <Input v-model="addOrEditForm.urlLink" placeholder="请输入商品URL"></Input>
 				        </Form-item>
 	        		</Col>
 	        	</Row>
 	        	<Row>
 	        		<Col span="12">
-	        			<Form-item label="父类目编码" prop="rootCode">
-				            <Input v-model="addOrEditForm.rootCode" placeholder="请输入父类目编码"></Input>
+	        			<Form-item label="优惠券URL" prop="urlLinkCoupon">
+				            <Input v-model="addOrEditForm.urlLinkCoupon" placeholder="请输入优惠券URL"></Input>
 				        </Form-item>
 	        		</Col>
-	        		<Col span="12">
-	        			<Form-item label="备注" prop="remark">
-				            <Input v-model="addOrEditForm.remark" placeholder="请输入备注"></Input>
-				        </Form-item>
-	        		</Col>
-	        	</Row>
-	        	<Row>
 	        		<Col span="12">
 	        			<Form-item label="有效位" prop="deleted">
 				            <Select v-model="addOrEditForm.deleted" placeholder="请输入有效位">
@@ -71,33 +59,35 @@
 				        </Form-item>
 	        		</Col>
 	        	</Row>
+	        	<Row>
+	        		<Col span="12">
+	        			<Form-item label="缩略图" prop="image">
+	        				<img :src="addOrEditForm.image" style="width: 720px; height: 200px;" v-if="addOrEditForm.image != null && addOrEditForm.image.length > 0" @click="clickImages" />
+							<Button type="dashed" v-if="addOrEditForm.image == null || addOrEditForm.image.length == 0"  style="width: 720px; height: 200px;" @click="clickImages">
+				            	<Icon size="50" type="image"></Icon>
+				            </Button>
+				            <input type="file" ref="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg" @change="selectImages">
+				        </Form-item>
+	        		</Col>
+	        	</Row>
 			</Form>
 	    </Modal>
 	</div>
 </template>
 
 <script>
-import GoodsType from '../../scripts/goodstype'
-import Extend from 'extend'
-
+import GoodsCarousel from '../../scripts/goodscarousel'
 
 export default {
 	data() {
 		return {
 			form: {
-				name: '',
 				deleted: ''
 			},
-			// 分页对象
-	      	page: {
-	      		total: 0,
-	      		pageSize: 10,
-	      		pageNo: 1
-	      	},
-	      	// 模态窗口对象
+			// 模态窗口对象
 	      	model: {
 	      		show: false,
-	      		title: '新增类目',
+	      		title: '新增轮播图',
 	      		scrollable: true,
 	      		width: 1200,
 	      		okText: '提交',
@@ -107,34 +97,33 @@ export default {
 	      	// 新增或编辑商品表单对象
 	      	addOrEditForm: {
 	      		id: '',
-	      		code: '',
 	      		name: '',
-	      		rootCode: 'root',
-	      		remark: '',
-	      		deleted: 'false'
+	      		urlLink: '',
+	      		urlLinkCoupon: '',
+	      		deleted: 'false',
+	      		image: ''
 	      	},
+	      	// 表单校验规则
 	      	addOrEditRule: {
-	      		code: [
-	                { required: true, message: '类目编码不能为空', trigger: 'blur' }
-	            ],
 	      		name: [
 	                { required: true, message: '类目名称不能为空', trigger: 'blur' }
 	            ],
-	            rootCode: [
+	            urlLink: [
 	                { required: true, message: '父类目编码不能为空', trigger: 'blur' }
-	            ],
-	            remark: [
-	                { required: true, message: '备注不能为空', trigger: 'blur' }
 	            ],
 	            deleted: [
 	                { required: true, message: '有效位不能为空', trigger: 'blur' }
+	            ],
+	            image: [
+	                { required: true, message: '图片不能为空', trigger: 'blur' }
 	            ]
 	      	},
-	      	// 列表字段定义
+			// 列表字段定义
 			columns: [
-				{title: '类目编码', key: 'code'},
-				{title: '类目名称', key: 'name'},
-				{title: '备注', key: 'remark'},
+				{title: '名称', key: 'name'},
+				{title: '图片文件名', key: 'fileId'},
+				{title: '商品URL', key: 'urlLink'},
+				{title: '优惠券URL', key: 'urlLinkCoupon'},
 				{title: '状态', key: 'deleted', 
 					render: (h, params) => {
 	      				return params.row.deleted ? '已删除' : '有效';
@@ -181,107 +170,106 @@ export default {
 		}
 	},
 
-	created() {
-		
-	},
-
 	// 模板编译/挂载后
 	mounted() {
 		this.search('form');
 	},
 
 	methods: {
-		// 查询分页数据
+		// 查询
 		search(name){
 			this.$refs[name].validate((valid) => {
 				if(valid){
-					GoodsType.search(Extend(this.form, this.page, {pageNo: this.page.pageNo - 1}), (res) => {
-						this.page.total = res.data.totalElements
-        				this.page.pageSize = res.data.size
-						this.datas = res.data.content
+					GoodsCarousel.search(this.form, (res) => {
+						this.datas = res.data
 					})
 				}else{
 					this.$Message.error('表单验证失败!')
 				}
 			})
 		},
-		// 分页当前页改变回调
-      	pageNoChange (pageNo){
-      		this.page.pageNo = pageNo
-      		this.search()
+
+		// 重置查询条件
+		reset(name){
+			this.$refs[name].resetFields()
+		},
+
+		ok(name){
+			this.$refs[name].validate((valid) => {
+	      	// 表单校验成功
+	      	if(valid){
+	      		GoodsCarousel.saveOrUpdate(this.addOrEditForm, (res) => {
+	      			if(res.code == '1'){
+	      				this.$Message.success('提交成功!');
+	      				setTimeout(() => {
+			      			this.model.show = false;
+			      			this.search('form');// 刷新商品列表
+			      		}, 500);
+	      			}
+	      		});
+	      	}else{
+	      		this.$Message.error('表单验证失败!');
+	      		this.model.loading = false;
+	      		setTimeout(() => {
+	      			this.model.loading = true;
+	      		}, 50);
+	      	}
+	      })
+		},
+
+		cancel(){
+			this.$Message.info('点击了取消');
       	},
-      	// 每页大小变化时
-      	pageSizeChange (pageSize){
-      		this.page.pageNo = 1
-      		this.page.pageSize = pageSize
-      		this.search()
-      	},
-      	// 重置查询条件
-      	reset (name) {
-        	this.$refs[name].resetFields()
-      	},
-      	// 新增/编辑
-      	showAddOrEditModel (id) {
-      		if(typeof id == 'undefined'){
-				this.model.title = '新增类目'
+
+      	// 打开模态窗口
+		showAddOrEditModel(id){
+			if(typeof id == 'undefined'){
+				this.model.title = '新增轮播图'
 				this.addOrEditForm.id = ''
-				this.addOrEditForm.code = ''
 				this.addOrEditForm.name = ''
-				this.addOrEditForm.rootCode = 'root'
-				this.addOrEditForm.remark = ''
+				this.addOrEditForm.urlLink = ''
+				this.addOrEditForm.urlLinkCoupon = ''
+				this.addOrEditForm.image = ''
 				this.addOrEditForm.deleted = 'false'
       		}else{
-      			this.model.title = '编辑类目'
-      			GoodsType.findById(id, (res) => {
-      				this.addOrEditForm.id = res.id
-					this.addOrEditForm.code = res.code
+      			this.model.title = '编辑轮播图'
+   				GoodsCarousel.findById(id, (res) => {
+   					this.addOrEditForm.id = res.id
 					this.addOrEditForm.name = res.name
-					this.addOrEditForm.rootCode = res.rootCode
-					this.addOrEditForm.remark = res.remark
+					this.addOrEditForm.urlLink = res.urlLink
+					this.addOrEditForm.urlLinkCoupon = res.urlLinkCoupon
+					this.addOrEditForm.image = '/haoback_service/upload/' + res.fileId + '.jpg'
 					this.addOrEditForm.deleted = res.deleted + ''
-      			})
+   				})
       		}
 
       		this.model.show = true;// 显示窗口
-      	},
-      	ok(name){
-      		this.$refs[name].validate((valid) => {
-      			// 表单校验成功
-		      	if(valid){
-		      		GoodsType.saveOrUpdate(this.addOrEditForm, (res) => {
-		      			if(res.code == '1'){
-							this.$Message.success('保存成功!');
-							setTimeout(() => {
-				      			this.model.show = false;
-				      			this.search('form');// 刷新商品列表
-				      		}, 500);
-		      			}else{
-							this.$Message.error('保存失败!');
-							this.model.show = false;
-		      			}
-		      		})
-		      	}else{
-		      		this.$Message.error('表单验证失败!');
-		      		this.model.loading = false;
-		      		setTimeout(() => {
-		      			this.model.loading = true;
-		      		}, 50);
-		      	}
-      		})
-      	},
-      	cancel(){
+		},
+		// 点击选择图片
+        clickImages () {
+      	  this.$refs.uploads.click();
+        },
+        // 选择图片
+      selectImages (e) {
+		var file = e.target.files[0]
+		if (!/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(e.target.value)) {
+			 this.$Message.error('图片类型必须是.gif,jpeg,jpg,png,bmp中的一种');
+			 return false
+		 }
+		var reader = new FileReader()
+		reader.onload = (e) => {
+  			this.addOrEditForm.image = e.target.result
+		}
+		reader.readAsDataURL(file)
+      },
 
-      	},
-      	remove(id){
-      		GoodsType.delete(id, (res) => {
-      			if(res.code == '1'){
-      				this.$Message.success('删除成功!');
-      				this.search('form');
-      			}else{
-      				this.$Message.error('删除失败!');
-      			}
-      		})
-      	}
+      // 逻辑删除商品
+      remove (id) {
+        GoodsCarousel.delete(id, (res) => {
+        	this.$Message.success('删除成功!');
+        	this.search('form');// 刷新商品列表
+        });
+      }
 	}
 }
 </script>

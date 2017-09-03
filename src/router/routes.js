@@ -4,7 +4,8 @@ const Login = r => require.ensure([], () => r(require('@/components/Login.vue'))
 	  Home = r => require.ensure([], () => r(require('@/components/Home.vue')), 'home'),
 	  User = r => require.ensure([], () => r(require('@/components/admin/User.vue')), 'user'),
 	  Goods = r => require.ensure([], () => r(require('@/components/goods/Goods.vue')), 'goods'),
-	  GoodsType = r => require.ensure([], () => r(require('@/components/goods/GoodsType.vue')), 'goodstype');
+	  GoodsType = r => require.ensure([], () => r(require('@/components/goods/GoodsType.vue')), 'goodstype'),
+	  GoodsCarousel = r => require.ensure([], () => r(require('@/components/goods/GoodsCarousel.vue')), 'goodstype');
 module.exports = [
 	// 入口
 	{
@@ -20,7 +21,8 @@ module.exports = [
             { path: '/index/home', component: Home, name: '主页内容'},
             { path: '/index/user', component: User, name: '用户管理'},
             { path: '/index/goods', component: Goods, name: '商品管理'},
-            { path: '/index/goodstype', component: GoodsType, name: '商品类型'}
+            { path: '/index/goodstype', component: GoodsType, name: '商品类型'},
+            { path: '/index/carousel', component: GoodsCarousel, name: '轮播图管理'}
         ]
 	},
 	{
