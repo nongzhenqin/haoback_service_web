@@ -238,7 +238,7 @@ export default {
 					this.addOrEditForm.name = res.name
 					this.addOrEditForm.urlLink = res.urlLink
 					this.addOrEditForm.urlLinkCoupon = res.urlLinkCoupon
-					this.addOrEditForm.image = '/haoback_service/upload/' + res.fileId + '.jpg'
+					this.addOrEditForm.image = '/wohuitiao_service/upload/' + res.fileId + '.jpg'
 					this.addOrEditForm.deleted = res.deleted + ''
    				})
       		}

@@ -70,7 +70,7 @@ export default {
             this.$refs[name].validate((valid) => {
                 if (valid) {
                       let _this = this;
-                      Vue.http.post('/haoback_service/j_spring_security_check', 
+                      Vue.http.post('/wohuitiao_service/j_spring_security_check', 
                                     this.formInline).then((res) => {
                         if(!res.data.code || res.data.code == '0'){
                           _this.info.msg = res.data.msg || '登录失败';

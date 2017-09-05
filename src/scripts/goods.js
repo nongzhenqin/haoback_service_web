@@ -9,7 +9,7 @@ let goods = {}
  * 获取商品列表
  */
 goods.findGoodsList = (params, callback) => {
-	Vue.http.get('/haoback_service/goods_service/page', {params: params}).then((res) => {
+	Vue.http.get('/wohuitiao_service/goods_service/page', {params: params}).then((res) => {
 	    let data = res.body.datas.data;
         !!callback && callback(data);
 	})
@@ -19,7 +19,7 @@ goods.findGoodsList = (params, callback) => {
  * 获取商品分类
  */
 goods.findGoodsType = (callback) => {
-	Vue.http.get('/haoback_service/goods/goods_type').then((res) => {
+	Vue.http.get('/wohuitiao_service/goods/goods_type').then((res) => {
 	    let data = res.body.datas.data;
         !!callback && callback(data);
 	})
@@ -29,7 +29,7 @@ goods.findGoodsType = (callback) => {
  * 保存商品信息
  */
 goods.save = (params, callback) => {
-	Vue.http.post('/haoback_service/goods_service/save', params).then((res) => {
+	Vue.http.post('/wohuitiao_service/goods_service/save', params).then((res) => {
 	    let data = res.body.datas;
         !!callback && callback(data);
 	})
@@ -39,7 +39,7 @@ goods.save = (params, callback) => {
  * 通过id查询商品信息
  */
 goods.findById = (goodsId, callback) => {
-	Vue.http.get('/haoback_service/goods_service/details/' + goodsId).then((res) => {
+	Vue.http.get('/wohuitiao_service/goods_service/details/' + goodsId).then((res) => {
 	    let data = res.body.datas.data;
         !!callback && callback(data);
 	})
@@ -49,7 +49,7 @@ goods.findById = (goodsId, callback) => {
  * 通过id删除商品
  */
 goods.delete = (goodsId, callback) => {
-	Vue.http.post('/haoback_service/goods_service/delete', {goodsId: goodsId}).then((res) => {
+	Vue.http.post('/wohuitiao_service/goods_service/delete', {goodsId: goodsId}).then((res) => {
 	    let data = res.body.datas;
         !!callback && callback(data);
 	})
@@ -59,7 +59,7 @@ goods.delete = (goodsId, callback) => {
  * 从淘宝拉取商品信息
  */
 goods.updateGoodsInfo = (callback) => {
-	Vue.http.post('/haoback_service/goods_service/updateGoodsInfo').then((res) => {
+	Vue.http.post('/wohuitiao_service/goods_service/updateGoodsInfo').then((res) => {
 		let data = res.body.datas;
         !!callback && callback(data);
 	})

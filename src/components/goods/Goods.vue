@@ -500,7 +500,7 @@ export default {
 		      	this.addOrEditForm.urlLink = res.urlLink;
 		      	this.addOrEditForm.urlLinkCoupon = res.urlLinkCoupon;
 	      		this.addOrEditForm.isTmall = res.isTmall ? '1' : '0';
-		      	this.addOrEditForm.image = '/haoback_service/upload/' + res.fileId + '.jpg';
+		      	this.addOrEditForm.image = '/wohuitiao_service/upload/' + res.fileId + '.jpg';
 
 		      	this.model.show = true;// 显示窗口
       		});

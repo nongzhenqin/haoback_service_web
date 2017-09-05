@@ -8,7 +8,7 @@ let goodstype = {}
 
 // 分页查询类目
 goodstype.search = (param, callback) => {
-	Vue.http.get('/haoback_service/goods_type/page', {params: param}).then((res) => {
+	Vue.http.get('/wohuitiao_service/goods_type/page', {params: param}).then((res) => {
 		let data = res.data.datas
         !!callback && callback(data)
 	})
@@ -16,7 +16,7 @@ goodstype.search = (param, callback) => {
 
 // 查询类目详情
 goodstype.findById = (id, callback) => {
-	Vue.http.get('/haoback_service/goods_type/details', {params: {id: id}}).then((res) => {
+	Vue.http.get('/wohuitiao_service/goods_type/details', {params: {id: id}}).then((res) => {
 		let data = res.data.datas.data
         !!callback && callback(data)
 	})
@@ -24,7 +24,7 @@ goodstype.findById = (id, callback) => {
 
 // 新增或更新类目
 goodstype.saveOrUpdate = (param, callback) => {
-	Vue.http.post('/haoback_service/goods_type/saveOrUpdate', param).then((res) => {
+	Vue.http.post('/wohuitiao_service/goods_type/saveOrUpdate', param).then((res) => {
 		let data = res.data.datas
         !!callback && callback(data)
 	})
@@ -32,7 +32,7 @@ goodstype.saveOrUpdate = (param, callback) => {
 
 // 删除类目
 goodstype.delete = (id, callback) => {
-	Vue.http.post('/haoback_service/goods_type/delete', {id: id}).then((res) => {
+	Vue.http.post('/wohuitiao_service/goods_type/delete', {id: id}).then((res) => {
 		let data = res.data.datas
         !!callback && callback(data)
 	})

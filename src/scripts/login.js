@@ -10,7 +10,7 @@ let login = {};
  * 判断是否已登录
  */
 login.isLogin = (callback) => {
-	Vue.http.get('/haoback_service/is_login').then((res) => {
+	Vue.http.get('/wohuitiao_service/is_login').then((res) => {
         let data = res.data.datas;
         !!callback && callback(data);
       })

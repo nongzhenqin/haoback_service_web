@@ -200,7 +200,7 @@ export default {
       // 登出
       logout(type){
         let _this = this;
-        Vue.http.get('/haoback_service/j_spring_security_logout').then(() => {
+        Vue.http.get('/wohuitiao_service/j_spring_security_logout').then(() => {
           _this.$router.push({path: '/login'})
         })
       },
