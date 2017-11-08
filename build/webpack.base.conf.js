@@ -50,8 +50,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          // 此处css中引用路径不对，所以往上走两层
-          name: utils.assetsPath('../../fonts/[name].[hash:7].[ext]')
+          name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
       }
     ]

@@ -173,18 +173,18 @@ export default {
 
     beforeCreate() {
       // 访问登录页面时，判断是否已登录，如果已登录则跳转到首页
-      Login.isLogin((res) => {
-        if(res.code == '0'){
-          this.$router.push({path: '/login'})
-        }else{
+      // Login.isLogin((res) => {
+      //   if(res.code == '0'){
+      //     this.$router.push({path: '/login'})
+      //   }else{
           // 获取菜单
           Index.getMenus((data) => {
             this.userInfo.userName = data.userName;
             this.userInfo.id = data.id;
             this.menus = data.data;
           });
-        }
-      });
+      //   }
+      // });
     },
 
     created(){

@@ -61,6 +61,13 @@
 	        	</Row>
 	        	<Row>
 	        		<Col span="12">
+	        			<Form-item label="淘口令" prop="taoCommand">
+				            <Input v-model="addOrEditForm.taoCommand" placeholder="请输入淘口令"></Input>
+				        </Form-item>
+	        		</Col>
+	        	</Row>
+	        	<Row>
+	        		<Col span="12">
 	        			<Form-item label="缩略图" prop="image">
 	        				<img :src="addOrEditForm.image" style="width: 720px; height: 200px;" v-if="addOrEditForm.image != null && addOrEditForm.image.length > 0" @click="clickImages" />
 							<Button type="dashed" v-if="addOrEditForm.image == null || addOrEditForm.image.length == 0"  style="width: 720px; height: 200px;" @click="clickImages">
@@ -100,6 +107,7 @@ export default {
 	      		name: '',
 	      		urlLink: '',
 	      		urlLinkCoupon: '',
+	      		taoCommand: '',
 	      		deleted: 'false',
 	      		image: ''
 	      	},
@@ -116,6 +124,9 @@ export default {
 	            ],
 	            image: [
 	                { required: true, message: '图片不能为空', trigger: 'blur' }
+	            ],
+	            taoCommand: [
+	                { required: true, message: '淘口令不能为空', trigger: 'blur' }
 	            ]
 	      	},
 			// 列表字段定义
@@ -124,6 +135,7 @@ export default {
 				{title: '图片文件名', key: 'fileId'},
 				{title: '商品URL', key: 'urlLink'},
 				{title: '优惠券URL', key: 'urlLinkCoupon'},
+				{title: '淘口令', key: 'taoCommand'},
 				{title: '状态', key: 'deleted', 
 					render: (h, params) => {
 	      				return params.row.deleted ? '已删除' : '有效';
@@ -229,6 +241,7 @@ export default {
 				this.addOrEditForm.name = ''
 				this.addOrEditForm.urlLink = ''
 				this.addOrEditForm.urlLinkCoupon = ''
+				this.addOrEditForm.taoCommand = ''
 				this.addOrEditForm.image = ''
 				this.addOrEditForm.deleted = 'false'
       		}else{
@@ -238,6 +251,7 @@ export default {
 					this.addOrEditForm.name = res.name
 					this.addOrEditForm.urlLink = res.urlLink
 					this.addOrEditForm.urlLinkCoupon = res.urlLinkCoupon
+					this.addOrEditForm.taoCommand = res.taoCommand
 					this.addOrEditForm.image = '/wohuitiao_service/upload/' + res.fileId + '.jpg'
 					this.addOrEditForm.deleted = res.deleted + ''
    				})

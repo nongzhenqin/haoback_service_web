@@ -37,6 +37,7 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
+        publicPath: '../../', // CSS打生产包引用路径不对
         fallback: 'vue-style-loader'
       })
     } else {

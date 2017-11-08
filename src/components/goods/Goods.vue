@@ -20,6 +20,12 @@
 	                </Col>
 	            </Row>
 	        </Form-item>
+	        <Form-item label="状态" prop="status">
+	            <Select v-model="form.status" placeholder="请选择">
+	                <Option value="1">上架</Option>
+	                <Option value="0">下架</Option>
+	            </Select>
+	        </Form-item>
 	        <Form-item label="有效" prop="validind">
 	            <Select v-model="form.validind" placeholder="请选择">
 	                <Option value="0">是</Option>
@@ -140,6 +146,11 @@
 
 	        	<Row>
 	        		<Col span="12">
+	        			<Form-item label="优惠券金额" prop="couponAmount">
+				            <Input v-model="addOrEditForm.couponAmount" placeholder="请输入优惠券金额"></Input>
+				        </Form-item>
+	        		</Col>
+	        		<Col span="12">
 	        			<Form-item label="天猫商家" prop="isTmall">
 				            <Select v-model="addOrEditForm.isTmall" placeholder="请选择">
 				            	<Option value="0">否</Option>
@@ -151,6 +162,11 @@
 
 	        	<Row>
 	        		<Col span="12">
+	        			<Form-item label="淘口令" prop="taoCommand">
+				            <Input v-model="addOrEditForm.taoCommand" placeholder="请输入淘口令"></Input>
+				        </Form-item>
+	        		</Col>
+	        		<Col span="12">
 	        			<Form-item label="缩略图" prop="image">
 	        				<img :src="addOrEditForm.image" style="width: 218px; height: 218px;" v-if="addOrEditForm.image != null && addOrEditForm.image.length > 0" @click="clickImages" />
 							<Button type="dashed" v-if="addOrEditForm.image == null || addOrEditForm.image.length == 0"  style="width: 218px; height: 218px;" @click="clickImages">
@@ -159,7 +175,7 @@
 				            <input type="file" ref="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg" @change="selectImages">
 				        </Form-item>
 	        		</Col>
-	        		<Col span="12">
+	        		<Col span="12" style="display: none;">
 	        			<Form-item label="裁剪图片">
 		        			<vueCropper
 		        			  style="height: 505px;width: 505px;"
@@ -246,11 +262,13 @@ export default {
       		goodsTypeId: '',
       		salesNum: '',
       		status: '1',
-      		sort: '',
+      		sort: '1',
       		deleted: '',
       		image: '',
       		urlLink: '',
       		urlLinkCoupon: '',
+      		couponAmount: '',
+      		taoCommand: '',
       		isTmall: ''
       	},
       	addOrEditRule: {
@@ -287,6 +305,9 @@ export default {
             ],
             urlLink: [
                 { required: true, message: 'URL不能为空', trigger: 'blur' }
+            ],
+            taoCommand: [
+                { required: true, message: '淘口令不能为空', trigger: 'blur' }
             ]
       	},
       	// 查询条件对象
@@ -294,7 +315,8 @@ export default {
       		name: '',
       		beginDate: '',
       		endDate: '',
-      		validind: '0'
+      		validind: '0',
+      		status: '1'
       	},
       	// 分页对象
       	page: {
@@ -305,11 +327,12 @@ export default {
       	// 列定义对象
       	columns: [
       		{title: '商品名称', key: 'name'},
-      		{title: '品牌', key: 'brand'},
+      		// {title: '品牌', key: 'brand'},
       		{title: '简介', key: 'info'},
-      		{title: '型号', key: 'models', width: 100},
-      		{title: '价格', key: 'price', width: 70},
-      		{title: '销量', key: 'salesNum', width: 70},
+      		// {title: '型号', key: 'models', width: 100},
+      		{title: '价格', key: 'price', width: 80},
+      		{title: '优惠券', key: 'couponAmount', width: 80},
+      		{title: '销量', key: 'salesNum', width: 80},
       		{title: '状态', key: 'status',
       			width: 70,
       			render: (h, params) => {
@@ -436,13 +459,13 @@ export default {
       // 分页当前页改变回调
       pageNoChange (pageNo){
       	this.page.pageNo = pageNo;
-      	this.search({pageNo: pageNo, pageSize: this.page.pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind});
+      	this.search({pageNo: pageNo, pageSize: this.page.pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind, status: this.form.status});
       },
       // 每页大小变化时
       pageSizeChange (pageSize){
       	this.page.pageNo = 1;
       	this.page.pageSize = pageSize
-      	this.search({pageNo: this.page.pageNo, pageSize: pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind});
+      	this.search({pageNo: this.page.pageNo, pageSize: pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind, status: this.form.status});
       },
       // 查询提交
       handleSubmit (name) {
@@ -450,7 +473,7 @@ export default {
             if (valid) {
             	this.datas = [];
                 // this.$Message.success('提交成功!');
-                this.search({pageNo: this.page.pageNo, pageSize: this.page.pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind});
+                this.search({pageNo: this.page.pageNo, pageSize: this.page.pageSize, name: this.form.name, beginDate: dateUtils.formatDate(this.form.beginDate, 'yyyy-MM-dd'), endDate: dateUtils.formatDate(this.form.endDate, 'yyyy-MM-dd'), validind: this.form.validind, status: this.form.status});
             } else {
                 this.$Message.error('表单验证失败!');
             }
@@ -470,14 +493,16 @@ export default {
 	      	this.addOrEditForm.brand = '';
 	      	this.addOrEditForm.models = '';
 	      	this.addOrEditForm.price = '';
-	      	this.addOrEditForm.goodsTypeId = '';
+	      	// this.addOrEditForm.goodsTypeId = '';
 	      	this.addOrEditForm.salesNum = '';
 	      	this.addOrEditForm.status = '1';
-	      	this.addOrEditForm.sort = '';
+	      	this.addOrEditForm.sort = '1';
 	      	this.addOrEditForm.deleted = 'false';
 	      	this.addOrEditForm.image = '';
 	      	this.addOrEditForm.urlLink = '';
 	      	this.addOrEditForm.urlLinkCoupon = '';
+	      	this.addOrEditForm.couponAmount = '';
+	      	this.addOrEditForm.taoCommand = '';
 	      	this.addOrEditForm.isTmall = '0';
 	      	this.cropper.img = '';
 
@@ -499,6 +524,8 @@ export default {
 		      	this.addOrEditForm.deleted = res.deleted + '';
 		      	this.addOrEditForm.urlLink = res.urlLink;
 		      	this.addOrEditForm.urlLinkCoupon = res.urlLinkCoupon;
+		      	this.addOrEditForm.couponAmount = res.couponAmount;
+		      	this.addOrEditForm.taoCommand = res.taoCommand;
 	      		this.addOrEditForm.isTmall = res.isTmall ? '1' : '0';
 		      	this.addOrEditForm.image = '/wohuitiao_service/upload/' + res.fileId + '.jpg';
 
